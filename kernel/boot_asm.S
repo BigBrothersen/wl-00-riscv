@@ -3,7 +3,7 @@
 .global _entry
 _entry:
     # stack size = 4096B
-    la sp, stack0   # load stack pointer with stack0 or 0x8000000
+    la sp, kstack   # load stack pointer with stack0 or 0x8000000
     li t0, 1024*4   # store another stack
     add sp, sp, t0  # new stack
     call boot       # jump to boot.c
