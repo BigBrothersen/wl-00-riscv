@@ -7,10 +7,15 @@
 #define PAGE_SIZE 4096 // 4KB page
 #define NUM_PAGES ((MEM_END-MEM_START)/PAGE_SIZE)
 
-#define PGROUNDUP(sz)  (((sz)+PGSIZE-1) & ~(PGSIZE-1))
-#define PGROUNDDOWN(a) (((a)) & ~(PGSIZE-1))
+#define PGROUNDUP(sz)  (((sz)+PAGE_SIZE-1) & ~(PAGE_SIZE-1))
+#define PGROUNDDOWN(a) (((a)) & ~(PAGE_SIZE-1))
 
-void print_mem(uint32_t *addr, uint32_t len, uint32_t increment);
-
+void print_mem(uint32_t addr, int len, int increment);
+void bitmap_init();
+void kfree_range(void *start_pa, void *end_pa);
+void *kalloc();
+void kfree(void *pa);
+void *memset(void *ptr, int value, uint32_t num);
+int page_idx(void *pa);
 
 #endif
