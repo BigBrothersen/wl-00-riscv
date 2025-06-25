@@ -4,7 +4,7 @@ LD = $(CC)
 CFLAGS = -ffreestanding -nostdlib -mcmodel=medany -O2 -Wall
 LDFLAGS = -T kernel.ld -nostdlib -ffreestanding
 
-C_SRC = boot.c main.c print.c
+C_SRC = boot.c main.c print.c uart.c mem.c virt_mem.c
 ASM_SRC = boot_asm.S
 
 C_OBJ = $(C_SRC:.c=.o)

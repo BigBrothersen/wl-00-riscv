@@ -1,35 +1,68 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include "print.h"
+#include "uart.h"
 
-static char digits[] = "01234566789abcdef";
+const char *digits = "0123456789abcdef";
 
-int strlen(char *str)
+
+uint32_t strlen(char *str)
 {
-    int count = 0;
+    uint32_t count = 0;
     while (*str != '\0') {
         count++;
     }
     return count;
 }
 
-void print_char(char c)
+void error(char *str)
 {
-    *(volatile char*)UART0 = c;
-    return;
+    printf("error: %s\n", str);
+}
+
+void putchar(char c)
+{
+    *(volatile char*)UART_0 = c;
 }
 
 void print_string(char *str)
 {
     while(*str){
-        print_char(*str++);
+        putchar(*str++);
     }
-    return;
+}
+
+void print_addr(uint64_t addr) 
+{
+    print_string("0x");
+    for (int i = 28; i >= 0; i -= 4) {
+        int digit = (addr >> i) & 0xF;
+        putchar(digits[(addr >> i) & 0xF]);
+    }
 }
 
 // TODO: implement printint. will expand to different base and size later
-void printint(long long num, int base)
+void print_uint(uint64_t num, uint8_t base) 
 {
+    char nums[64]; // larger buffer for 64-bit numbers
+    int i = 0;
+    do {
+        nums[i++] = digits[num % base];
+        num /= base;
+    } while (num != 0);
+
+    // print in correct order
+    while (i > 0) {
+        putchar(nums[--i]);
+    }
+}
+
+void printint(int64_t num, uint8_t base)
+{
+    if (!(base == 2 || base == 8 || base == 10 || base == 16)){
+        error("Invalid base");
+        return;
+    }
     char nums[16];
     int i;
     int negative;
@@ -46,9 +79,8 @@ void printint(long long num, int base)
         nums[i++] = '-';
     }
     while(--i >= 0) {
-        print_char(nums[i]);
+        putchar(nums[i]);
     }
-    return;
 }
 
 // TODO: implement printf for booting message and debugging
@@ -62,34 +94,57 @@ void printf(char *fmt, ...)
         if (*fmt == '%'){
             *fmt++;
             switch (*fmt) {
-                case '\0':
+                case '\0':{
                     print_string("Error format specifier followed by null");
                     terminate = 1;
                     break;
-                case 'd':
+                }
+                case 'd':{
                     int num = va_arg(args, int);
                     printint(num, 10);
                     *fmt++;
                     break;
-                case 's':
+                }
+                case 'u':{
+                    unsigned long long num = va_arg(args, unsigned long long);
+                    print_uint(num, 10);
+                    *fmt++;
+                    break;
+                }
+                case 'x':{
+                    int num = va_arg(args, int) ;
+                    printint(num, 16);
+                    *fmt++;
+                    break;
+                }
+                case 'p':{
+                    char *ptr = va_arg(args, char *);
+                    print_addr((int*)ptr);
+                    *fmt++;
+                    break;
+                }
+                case 's':{
                     char *str = va_arg(args, char*);
                     print_string(str);
                     *fmt++;
                     break;
-                case 'c':
-                    char *c = va_arg(args, char*);
-                    print_char(c);
+                }
+                case 'c':{
+                    int *c = va_arg(args, int);
+                    putchar(c);
                     *fmt++;
                     break;
-                default:
+                }
+                default:{
                     print_string("unknown specifier");
+                    terminate = 1;
                     break;
+                }
             }
         }
         else {
-            print_char(*fmt++);
+            putchar(*fmt++);
         }
     }
     va_end(args);
-    return;
 }
