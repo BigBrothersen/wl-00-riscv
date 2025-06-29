@@ -60,7 +60,7 @@ void print_uint(uint64_t num, uint8_t base)
 void printint(int64_t num, uint8_t base)
 {
     if (!(base == 2 || base == 8 || base == 10 || base == 16)){
-        error("Invalid base");
+        error("printint: invalid base");
         return;
     }
     char nums[16];
@@ -95,7 +95,7 @@ void printf(char *fmt, ...)
             *fmt++;
             switch (*fmt) {
                 case '\0':{
-                    print_string("Error format specifier followed by null");
+                    error("printf: format specifier followed by null");
                     terminate = 1;
                     break;
                 }

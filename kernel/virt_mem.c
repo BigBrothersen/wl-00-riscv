@@ -3,9 +3,11 @@
 #include "defs.h"
 #include "uart.h"
 #include "mem.h"
+#include "csr.h"
 
 // page directory for kernel processes
 static pagetable_t kptable;
+
 
 /*
 Each process will have its own page table (an array of pointers where each pointer points to a direct page within the physical memory or frame)
@@ -123,18 +125,17 @@ void init_kvmhart()
     __asm__ volatile("sfence.vma zero, zero");
 }
 
-void w_satp(uint64_t x)
-{
-    asm volatile("csrw satp, %0" : : "r" (x));
-}
-
-uint64_t r_satp() {
-    uint64_t x;
-    asm volatile("csrr %0, satp" : "=r"(x));
-    return x;
-}
-
 int paging_status() {
     uint64_t x = r_satp();
     return (x >> 31) & 1;
 }
+
+// void init_trap() 
+// {
+//     // asm volatile("csrw stvec, %0" :: "r"(kerneltrap));
+//     // printf("stvec %p\n", r_stvec());
+//     // printf("kernel trap %p\n", kerneltrap);
+//     uintptr_t tepp = kerneltrap;
+//     w_stvec(tepp);
+//     // printf("stvec %p\n", r_stvec());
+// }

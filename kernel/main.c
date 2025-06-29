@@ -3,18 +3,23 @@
 #include "mem.h"
 #include "defs.h"
 
-
+#include "csr.h"
+#include "trap.h"
+#include "proc.c"
 
 void main() {
     // uart_init(); // UART is configured by default by QEMU
     printf("\n");
     printf("wl-00 kernel is booting");
     printf("\n");
-
     init_bitmap();  // allocate memory for bitmap
     init_kptable(); // initialize kernel page table   
-    // printf("paging status %d\n", paging_status());
     init_kvmhart(); // enable paging
-    // printf("paging status %d\n", paging_status());
+    init_trap();    // initialize trap vector
+    // init_proctable(); // TODO: initialize process table
+    // init_userprocess(); // TODO: implement first user process (shell)
+    
     while(1);
 }
+
+    // asm volatile("ecall"); // use this to trigger trap handler

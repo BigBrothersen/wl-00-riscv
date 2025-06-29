@@ -23,6 +23,12 @@ SECTIONS
     _etext = .;
     . = . + 0x1000;
 
+    /* .kerneltrap : {
+        *(.kerneltrap .kerneltrap)
+        . = ALIGN(0x1000);
+    }
+    . = . + 0x1000; */
+
     _sdata = .;
     .data : {
         *(.data .data.*)

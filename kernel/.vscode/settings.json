@@ -8,6 +8,8 @@
         "print.h": "c",
         "stdarg.h": "c",
         "stdint.h": "c",
-        "spinlock.h": "c"
+        "spinlock.h": "c",
+        "trap.h": "c",
+        "csr.h": "c"
     }
 }
