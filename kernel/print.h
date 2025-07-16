@@ -9,5 +9,6 @@ void printf(char *fmt, ...);
 void printint(int64_t num, uint8_t base);
 void print_addr(uint64_t addr);
 void printint(int64_t num, uint8_t base);
+void error(char *str);
 // void print_unsigned_hex(unsigned int n);
 #endif

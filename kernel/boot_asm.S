@@ -1,13 +1,20 @@
-# load kernel into 0x80000000
-.section .text
+# boot.S
+.section .text.init
 .global _entry
 _entry:
-    # stack size = 4096B
-    la sp, kstack   # load stack pointer with stack0 or 0x8000000
-    li t0, 1024*4   # store another stack
-    add sp, sp, t0  # new stack
-    call boot       # jump to boot.c
+    la sp, m_stack_end
+    andi sp, sp, -16
+    la t0, m_trap_handle
+    csrw mtvec, t0
+    call boot
+    j .
 
-loop:
-    j loop
-
+.section .text
+.global _main
+_main:
+    la sp, s_stack_end
+    andi sp, sp, -16
+    la t0, s_trap_handle
+    csrw stvec, t0
+    call main
+    j .

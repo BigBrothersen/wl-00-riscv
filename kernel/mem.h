@@ -24,6 +24,7 @@ void *memset(void *ptr, int value, uint32_t num);
 int page_idx(void *pa);
 uint8_t page_empty(int i);
 
+
 // virtual memory virt_mem.c
 
 // Virtual memory definitions 
@@ -54,6 +55,11 @@ typedef pte_t* pagetable_t;
 #define MAX_VA_ADDR          (MAX_VA_SIZE_BYTES - 1)       // 0xFFFFFFFF
 */
 
+// page directory for kernel processes
+static pagetable_t kptable;
+
+// user page table;
+
 void init_kptable();
 pagetable_t kptable_make();
 void *get_pa(void *va);
@@ -61,5 +67,6 @@ pte_t *mappage(pagetable_t pt, uint32_t va, uint32_t pa, int flags);
 int mappages(pagetable_t pt, uint32_t va, uint32_t pa, uint32_t size, int flags);
 int paging_status();
 void init_kvmhart();
+pagetable_t ptcreate();
 
 #endif;

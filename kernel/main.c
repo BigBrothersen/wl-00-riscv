@@ -16,10 +16,11 @@ void main() {
     init_kptable(); // initialize kernel page table   
     init_kvmhart(); // enable paging
     init_trap();    // initialize trap vector
-    // init_proctable(); // TODO: initialize process table
-    // init_userprocess(); // TODO: implement first user process (shell)
+    init_proctable(); // initialize process table
     
+    asm volatile("ecall"); // use this to trigger trap handler
+    // TODO: implement syscall
+    // implement trap handler
+    // init_userprocess(); // TODO: implement first user process (shell)
     while(1);
 }
-
-    // asm volatile("ecall"); // use this to trigger trap handler

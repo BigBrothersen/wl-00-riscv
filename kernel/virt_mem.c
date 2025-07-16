@@ -5,10 +5,6 @@
 #include "mem.h"
 #include "csr.h"
 
-// page directory for kernel processes
-static pagetable_t kptable;
-
-
 /*
 Each process will have its own page table (an array of pointers where each pointer points to a direct page within the physical memory or frame)
 VA	Purpose	PA
@@ -26,6 +22,19 @@ void init_kptable()
     kptable = kptable_make();
 }
 
+// void init_uptable()
+// {
+//     uptable = uptable_make();
+// }
+
+// pagetable_t uptable_make()
+// {
+//     pagetable_t upt;
+//     upt = (pagetable_t)kalloc();
+//     memset(upt, 0, PAGE_SIZE);
+//     return upt;
+// }
+
 // allocates memory, virtual memory map, and returns kernel pagetable
 pagetable_t kptable_make() 
 {
@@ -40,7 +49,7 @@ pagetable_t kptable_make()
     mappages(kpt, KERNBASE, KERNBASE, (uintptr_t)(&_etext), PTE_R);
 
     // // map the rest 
-    mappages(kpt, &_etext, &_etext, MEM_END-(uintptr_t)(&_etext), PTE_R | PTE_W);
+    mappages(kpt, (uint32_t)&_etext, (uint32_t)&_etext, MEM_END-(uintptr_t)(&_etext), PTE_R | PTE_W);
 
     return kpt;
 }
@@ -73,7 +82,7 @@ int mappages(pagetable_t pt, uint32_t va, uint32_t pa, uint32_t size, int flags)
     for (uintptr_t curr_va = va; curr_va < end; curr_va += PAGE_SIZE, pa += PAGE_SIZE) {
         pte = mappage(pt, curr_va, pa, flags);
         if (!pte) {
-            error("mappages: failed to map va %p to pa %p", curr_va, pa);
+            error("mappages: failed to map va to pa");
             ret = -1;
             break;
         }
@@ -97,7 +106,7 @@ pte_t *mappage(pagetable_t pt, uint32_t va, uint32_t pa, int flags)
     //printf("PD %p[%u] = %p (current)\n", pt, vpn1, pt[vpn1]);
     if ((pt[vpn1] & PTE_V) == 0) {
         // Create a second level page table
-        pte_t pt_addr = kalloc();   // allocate new page for second level page table
+        pte_t pt_addr = (pte_t)kalloc();   // allocate new page for second level page table
         //printf("  Allocated L2 PT at PA %p\n", pt_addr);
         pt[vpn1] = ((pt_addr / PAGE_SIZE) << 10) | PTE_V; // Set the (Page Physical Number) and valid bit
         //printf("  Updated PD %p[%u] = %p (PPN=%u | V)\n", pt, vpn1, pt[vpn1], (pt_addr / PAGE_SIZE));
@@ -128,6 +137,15 @@ void init_kvmhart()
 int paging_status() {
     uint64_t x = r_satp();
     return (x >> 31) & 1;
+}
+
+pagetable_t ptcreate() {
+    pagetable_t pt;
+    pt = (pagetable_t)kalloc();
+    if (pt == NULL)
+        return 0;
+    memset(pt, 0, PAGE_SIZE);
+    return pt;
 }
 
 // void init_trap() 

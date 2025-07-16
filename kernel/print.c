@@ -92,7 +92,7 @@ void printf(char *fmt, ...)
     va_start(args, fmt);
     while (*fmt && !terminate){
         if (*fmt == '%'){
-            *fmt++;
+            fmt++;
             switch (*fmt) {
                 case '\0':{
                     error("printf: format specifier followed by null");
@@ -102,37 +102,37 @@ void printf(char *fmt, ...)
                 case 'd':{
                     int num = va_arg(args, int);
                     printint(num, 10);
-                    *fmt++;
+                    fmt++;
                     break;
                 }
                 case 'u':{
                     unsigned long long num = va_arg(args, unsigned long long);
                     print_uint(num, 10);
-                    *fmt++;
+                    fmt++;
                     break;
                 }
                 case 'x':{
                     int num = va_arg(args, int) ;
                     printint(num, 16);
-                    *fmt++;
+                    fmt++;
                     break;
                 }
                 case 'p':{
                     char *ptr = va_arg(args, char *);
-                    print_addr((int*)ptr);
-                    *fmt++;
+                    print_addr((uint64_t)(uintptr_t)ptr);
+                    fmt++;
                     break;
                 }
                 case 's':{
                     char *str = va_arg(args, char*);
                     print_string(str);
-                    *fmt++;
+                    fmt++;
                     break;
                 }
                 case 'c':{
-                    int *c = va_arg(args, int);
-                    putchar(c);
-                    *fmt++;
+                    int c = va_arg(args, int);
+                    putchar((char)c);
+                    fmt++;
                     break;
                 }
                 default:{

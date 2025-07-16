@@ -10,6 +10,20 @@
         "stdint.h": "c",
         "spinlock.h": "c",
         "trap.h": "c",
-        "csr.h": "c"
+        "csr.h": "c",
+        "system_error": "c",
+        "random": "c",
+        "format": "c",
+        "fstream": "c",
+        "iostream": "c",
+        "istream": "c",
+        "limits": "c",
+        "new": "c",
+        "ratio": "c",
+        "stdexcept": "c",
+        "streambuf": "c",
+        "functional": "c",
+        "tuple": "c",
+        "*.inc": "c"
     }
 }

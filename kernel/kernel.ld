@@ -22,13 +22,6 @@ SECTIONS
     }
     _etext = .;
     . = . + 0x1000;
-
-    /* .kerneltrap : {
-        *(.kerneltrap .kerneltrap)
-        . = ALIGN(0x1000);
-    }
-    . = . + 0x1000; */
-
     _sdata = .;
     .data : {
         *(.data .data.*)
@@ -36,7 +29,6 @@ SECTIONS
     }
     _edata = .;
     . = . + 0x1000;
-    
     _sbss = .;
     .bss : {
         *(.bss .bss.*)
@@ -45,10 +37,14 @@ SECTIONS
     }
     _ebss = .;
     . = . + 0x1000;
-
+ 
     . = ALIGN(0x1000);
-    kstack = .;
-    . = . + 0x4000; /* 16KB kernel stack */
+    . = . + 0x1000;
+    m_stack_end = .;
+    . = ALIGN(0x1000);
+    . = . + 0x1000;
+    s_stack_end = .;
+    . = . + 0x20000; /* 128KB kernel stack (32 processes) */
 
     PROVIDE(end = .);
 }

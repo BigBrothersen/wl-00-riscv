@@ -1,5 +1,18 @@
 #include <stdint.h>
 
+void w_sie(uint64_t x) 
+{
+    asm volatile("csrw sie, %0" : : "r" (x));
+}
+
+uint64_t r_sie()
+{
+    uint64_t x;
+    asm volatile("csrr %0, sie" : "=r" (x) );
+    return x;
+}
+
+
 // which cpu this thread runs on
 uint64_t r_mhartid()
 {
@@ -36,12 +49,21 @@ uint64_t r_sepc()
     return x;
 }
 
+void w_sepc(uint64_t x)
+{
+    asm volatile("csrw sepc, %0" : : "r" (x));
+}
+
 uint64_t r_mstatus() {
     uint64_t x;
     asm volatile("csrr %0, mstatus" : "=r"(x));
     return x;
 }
 
+void w_mstatus(uint64_t x)
+{
+    asm volatile("csrw mstatus, %0" : : "r" (x));
+}
 // supervisor trap vector
 uint64_t r_stvec() {
     uint64_t x;
@@ -87,7 +109,20 @@ uint64_t r_mtvec()
     return x;
 }
 
-void w_mtvec(uint64_t x) {
+void w_mtvec(uint64_t x) 
+{
     x = x & ~0x3;
     asm volatile("csrw mtvec, %0" : : "r" (x));
+}
+
+uint64_t r_mepc()
+{
+    uint64_t x;
+    asm volatile("csrr %0, mepc" : "=r"(x));
+    return x;
+}
+
+void w_mepc(uint64_t x)
+{
+    asm volatile("csrw mepc, %0" : : "r" (x));
 }

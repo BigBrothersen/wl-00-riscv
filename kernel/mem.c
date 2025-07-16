@@ -98,9 +98,9 @@ void kfree(void *pa){
         return;
     }
     mem_bitmap[i] = 1;
-    // memset(PGROUNDDOWN((uintptr_t)pa), 0, PAGE_SIZE); // set all pages to 0 (optional)
+    memset((void *)PGROUNDDOWN((uintptr_t)pa), 0, PAGE_SIZE); // set all pages to 0 (optional)
+    pa = NULL; // set pointer back to NULL
 }
-
 
 // TODO: Function that allocates a single page of physical memory. Returns a pointer pointing to the page. If fails return null pointer.
 void *kalloc(){
@@ -108,7 +108,7 @@ void *kalloc(){
     for (int i = 0; i < NUM_PAGES; i++) {
         if (mem_bitmap[i]) {
             mem_bitmap[i] = 0;
-            addr = (MEM_START + i*PAGE_SIZE);
+            addr = (char*)(MEM_START + i*PAGE_SIZE);
             // printf("allocated page %d %d with address %p", i, page_idx(addr), addr);
             return addr;
         }

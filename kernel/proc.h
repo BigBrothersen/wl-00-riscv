@@ -8,7 +8,7 @@
 void init_proctable();
 
 
-enum procstate { NEW, READY, RUNNING, WAITING, END };
+enum procstate { UNUSED, NEW, READY, RUNNING, WAITING, END };
 
 // struct trapframe {
 //     // Registers to save for user context switching (if using user mode)
@@ -37,7 +37,8 @@ struct proc {
     char name[16]; // name of process
 
     pagetable_t pt; // page table of process
-    uint64_t kstack;
+    uint64_t kstack; // top of the kstack
+    // uint64_t kstack_b; // bottom of the kstack
     // struct trapframe *tf;
 
 };
